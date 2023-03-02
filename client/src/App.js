@@ -7,8 +7,8 @@ function App() {
   const [popupActive, setPopupActive] = useState(false);
   const [newTodo, setNewTodo] = useState("");
 
-  useEffect (() => {
-    GetTodos ();
+  useEffect(() => {
+    GetTodos();
   }, [])
 
   const GetTodos = () => {
@@ -19,13 +19,13 @@ function App() {
   }
 
   const completeTodo = async id => {
-    const data = await fetch(API_BASE + "/todo/complete/" + id).then (res => res.json());
+    const data = await fetch(API_BASE + "/todo/complete/" + id).then(res => res.json());
 
     setTodos(todos => todos.map(todo => {
       if (todo._id === data._id) {
         todo.complete = data.complete;
       }
-      
+
       return todo;
     }));
   }
@@ -46,8 +46,17 @@ function App() {
     setNewTodo("");
   }
 
+  const stringCheck = () => {
+    if (newTodo.trim().length !== 0) {
+      addTodo();
+    }
+    else {
+      setPopupActive(false);
+    }
+  }
+
   const deleteTodo = async id => {
-    const data = await fetch(API_BASE + "/todo/delete/" + id, {method: "DELETE"}).then(res => res.json());
+    const data = await fetch(API_BASE + "/todo/delete/" + id, { method: "DELETE" }).then(res => res.json());
 
     setTodos(todos => todos.filter(todo => todo._id !== data._id));
   }
@@ -64,7 +73,7 @@ function App() {
 
             <div className="text">{todo.text}</div>
 
-            <div className="delete-todo" onClick={(e) => {e.stopPropagation(); deleteTodo(todo._id)}}>x</div>
+            <div className="delete-todo" onClick={(e) => { e.stopPropagation(); deleteTodo(todo._id) }}>x</div>
           </div>
         )) : (
           <p>You currently have no tasks</p>
@@ -78,9 +87,11 @@ function App() {
           <div className="closePopup" onClick={() => setPopupActive(false)}>x</div>
           <div className="content">
             <h3>Add Task</h3>
-            { newTodo }
-            <input type="text" className="add-todo-input" onChange={e => setNewTodo(e.target.value)} value={newTodo}></input>
-            <div className="button" onClick={addTodo}>Create Task</div>
+            {newTodo}
+            <form onSubmit={stringCheck}>
+              <input type="text" className="add-todo-input" onChange={e => setNewTodo(e.target.value)} value={newTodo}></input>
+            </form>
+            <div className="button" onClick={stringCheck}>Create Task</div>
           </div>
         </div>
       ) : ''}
